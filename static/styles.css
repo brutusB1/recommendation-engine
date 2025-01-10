@@ -1,0 +1,145 @@
+/* Global Styles */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f7f9fc; /* Light background for a clean, modern look */
+    color: #333; /* Dark text for readability */
+}
+
+/* Container for Recommendations */
+.container {
+    max-width: 800px;
+    margin: 50px auto;
+    padding: 20px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Section Header Styling */
+.recommendation-section-title {
+    color: #4A90E2; /* Light blue for consistency with the UI theme */
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+
+/* Content List Styling */
+.recommendation-content {
+    margin-left: 20px; /* Indent content for better readability */
+    font-size: 1rem;
+    line-height: 1.6; /* Slightly increased for better readability */
+}
+
+.recommendation-content li {
+    margin-bottom: 10px; /* Space between list items */
+}
+
+/* Divider for Sections */
+.recommendation-divider {
+    margin: 20px 0;
+    border-top: 1px solid #e0e0e0; /* Subtle divider */
+}
+
+/* Styling for Recommendation Title */
+.recommendation-title {
+    color: #4A90E2;
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+/* Scrollable Recommendation Text */
+#recommendation-text {
+    white-space: pre-wrap; /* Preserves formatting and line breaks */
+    word-wrap: break-word; /* Ensures long words wrap correctly */
+    max-height: 400px; /* Limit height for long content */
+    overflow-y: auto; /* Add scroll for long text */
+    padding: 10px;
+    background-color: #f9fbff; /* Slightly lighter background for contrast */
+    border-radius: 5px;
+    border: 1px solid #e0e0e0;
+}
+
+/* Buttons */
+button {
+    display: inline-block;
+    width: 100%;
+    padding: 10px;
+    font-size: 1rem;
+    font-weight: bold;
+    color: white;
+    background-color: #4A90E2;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #357ABD; /* Slightly darker blue on hover */
+}
+
+button:disabled {
+    background-color: #A4C8F0; /* Lighter blue for disabled state */
+    cursor: not-allowed;
+}
+
+/* Text Input and Textarea */
+textarea,
+select {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    font-size: 1rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 5px;
+    background-color: #fff;
+    box-sizing: border-box;
+    transition: border-color 0.3s ease;
+}
+
+textarea:focus,
+select:focus {
+    outline: none;
+    border-color: #4A90E2;
+    box-shadow: 0 0 4px rgba(74, 144, 226, 0.5);
+}
+
+/* Loader Styling */
+.loader {
+    border: 4px solid #f3f3f3; /* Light gray */
+    border-top: 4px solid #4A90E2; /* Blue for the spinning effect */
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    animation: spin 1s linear infinite;
+    margin: 20px auto;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Media Query for Responsiveness */
+@media (max-width: 768px) {
+    .container {
+        padding: 15px;
+    }
+
+    .recommendation-title {
+        font-size: 1.2rem;
+    }
+
+    button {
+        font-size: 0.9rem;
+        padding: 8px;
+    }
+}

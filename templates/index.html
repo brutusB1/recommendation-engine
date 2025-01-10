@@ -1,0 +1,250 @@
+<link rel="stylesheet" href="/static/styles.css">
+
+<div class="container">
+    <h1>💡 Sales Recommendation Engine</h1>
+    <div id="prospect-section" class="card">
+        <label for="prospects" class="label">👤 Select a Prospect:</label>
+        <select id="prospects" class="input"></select>
+
+        <label for="transcript" class="label">📝 Video Transcript (Optional):</label>
+        <textarea
+            id="transcript"
+            class="input"
+            rows="5"
+            placeholder="Paste the transcript of the video here..."
+        ></textarea>
+
+        <button id="get-recommendation" class="btn">🚀 Get Recommendation</button>
+        <div id="loader" class="loader" style="display: none;"></div>
+    </div>
+
+    <div id="recommendation-output" class="card" style="display: none;">
+        <h3 class="recommendation-title">✨ Recommendation:</h3>
+        <div id="recommendation-text"></div>
+    </div>
+</div>
+
+<style>
+    /* Base styling */
+    body {
+        font-family: "Arial", sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f7fa;
+        color: #333;
+        line-height: 1.6;
+    }
+
+    .container {
+        max-width: 800px;
+        margin: 50px auto;
+        padding: 20px;
+    }
+
+    h1 {
+        text-align: center;
+        color: #4a90e2;
+        font-size: 2rem;
+        margin-bottom: 20px;
+    }
+
+    /* Card styling */
+    .card {
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+
+    .label {
+        display: block;
+        margin: 10px 0 5px;
+        font-weight: bold;
+        font-size: 1rem;
+        color: #333;
+    }
+
+    .input {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 1rem;
+    }
+
+    .input:focus {
+        border-color: #4a90e2;
+        outline: none;
+        box-shadow: 0 0 5px rgba(74, 144, 226, 0.5);
+    }
+
+    .btn {
+        width: 100%;
+        padding: 10px;
+        font-size: 1.1rem;
+        background: #4a90e2;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    .btn:hover {
+        background: #357ab8;
+    }
+
+    .loader {
+        border: 4px solid #f4f4f4;
+        border-top: 4px solid #4a90e2;
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        animation: spin 1s linear infinite;
+        margin: 10px auto;
+    }
+
+    @keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+
+    .recommendation-title {
+        color: #4a90e2;
+        font-size: 1.5rem;
+        margin-bottom: 10px;
+    }
+
+    ul {
+        padding-left: 20px;
+    }
+
+    ul li {
+        margin-bottom: 5px;
+    }
+
+    /* Responsive design */
+    @media (max-width: 768px) {
+        .container {
+            padding: 10px;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+        }
+
+        .btn {
+            font-size: 1rem;
+        }
+    }
+</style>
+
+<script>
+    async function loadProspects() {
+        try {
+            const response = await fetch("/prospects");
+            const data = await response.json();
+            const select = document.getElementById("prospects");
+
+            data.prospects.forEach(prospect => {
+                const option = document.createElement("option");
+                option.value = prospect;
+                option.textContent = prospect;
+                select.appendChild(option);
+            });
+        } catch (error) {
+            alert("Error loading prospects: " + error.message);
+        }
+    }
+
+    async function getRecommendation() {
+        const prospectName = document.getElementById("prospects").value;
+        const transcript = document.getElementById("transcript").value;
+        const loader = document.getElementById("loader");
+        const recommendationOutput = document.getElementById("recommendation-output");
+
+        loader.style.display = "block";
+        recommendationOutput.style.display = "none";
+
+        try {
+            const response = await fetch(`/recommend`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ name: prospectName, transcript }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                displayRecommendation(data);
+            } else {
+                alert(data.detail || "Error generating recommendation");
+            }
+        } catch (error) {
+            alert("Error: " + error.message);
+        } finally {
+            loader.style.display = "none";
+        }
+    }
+
+    function displayRecommendation(data) {
+    const recommendationOutput = document.getElementById("recommendation-output");
+    const recommendationText = document.getElementById("recommendation-text");
+
+    let output = "";
+
+    if (data.response_text) {
+        // Use preformatted style for raw response if available
+        output += `<h4 class="recommendation-section-title">Response:</h4>
+                   <pre class="recommendation-content">${data.response_text}</pre>`;
+    } else {
+        if (data.insights && data.insights.length > 0) {
+            output += `<h4 class="recommendation-section-title">✨ Insights:</h4>
+                       <ul class="recommendation-content">`;
+            data.insights.forEach(insight => {
+                output += `<li>${insight}</li>`;
+            });
+            output += `</ul><div class="recommendation-divider"></div>`;
+        }
+
+        if (data.next_steps && data.next_steps.length > 0) {
+            output += `<h4 class="recommendation-section-title">✅ Next Steps:</h4>
+                       <ul class="recommendation-content">`;
+            data.next_steps.forEach(step => {
+                output += `<li>${step}</li>`;
+            });
+            output += `</ul><div class="recommendation-divider"></div>`;
+        }
+
+        if (data.video_script) {
+            output += `<h4 class="recommendation-section-title">🎥 Video Script:</h4>
+                       <pre class="recommendation-content">${data.video_script}</pre>
+                       <div class="recommendation-divider"></div>`;
+        }
+
+        if (data.comment) {
+            output += `<h4 class="recommendation-section-title">💬 Comment:</h4>
+                       <p class="recommendation-content">${data.comment}</p>
+                       <div class="recommendation-divider"></div>`;
+        }
+
+        if (data.call_script) {
+            output += `<h4 class="recommendation-section-title">📞 Call Script:</h4>
+                       <pre class="recommendation-content">${data.call_script}</pre>`;
+        }
+    }
+
+    recommendationText.innerHTML = output;
+    recommendationOutput.style.display = "block";
+}
+
+    document.getElementById("get-recommendation").addEventListener("click", getRecommendation);
+
+    loadProspects();
+</script>
